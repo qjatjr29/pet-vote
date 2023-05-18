@@ -17,10 +17,12 @@ public class KafkaProperties {
 
   @Getter
   public static class Topic {
-    private final String voteEvent;
+    private final String voteSubmitEvent;
+    private final String voteCancelEvent;
 
-    public Topic(String voteEvent) {
-      this.voteEvent = voteEvent;
+    public Topic(String voteSubmitEvent, String voteCancelEvent) {
+      this.voteSubmitEvent = voteSubmitEvent;
+      this.voteCancelEvent = voteCancelEvent;
     }
   }
 

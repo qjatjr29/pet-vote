@@ -36,8 +36,13 @@ public class KafkaProducerConfig {
   }
 
   @Bean
-  public NewTopic voteEventTopic() {
-    return new NewTopic(kafkaProperties.getTopic().getVoteEvent(), 1, (short) 1);
+  public NewTopic voteSubmitEventTopic() {
+    return new NewTopic(kafkaProperties.getTopic().getVoteSubmitEvent(), 1, (short) 1);
+  }
+
+  @Bean
+  public NewTopic voteCancelEventTopic() {
+    return new NewTopic(kafkaProperties.getTopic().getVoteCancelEvent(), 1, (short) 1);
   }
 
 }
