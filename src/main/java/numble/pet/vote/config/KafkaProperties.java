@@ -19,10 +19,12 @@ public class KafkaProperties {
   public static class Topic {
     private final String voteSubmitEvent;
     private final String voteCancelEvent;
+    private final String petUpdateEvent;
 
-    public Topic(String voteSubmitEvent, String voteCancelEvent) {
+    public Topic(String voteSubmitEvent, String voteCancelEvent, String petUpdateEvent) {
       this.voteSubmitEvent = voteSubmitEvent;
       this.voteCancelEvent = voteCancelEvent;
+      this.petUpdateEvent = petUpdateEvent;
     }
   }
 
