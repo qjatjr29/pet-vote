@@ -27,9 +27,9 @@ public class KafkaConsumerConfig {
   public ConsumerFactory<String, Object> consumerFactory() {
     Map<String, Object> configProps = new HashMap<>();
     configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProperties.getBootstrapServers());
-    configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getKeySerializer());
-    configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getValueSerializer());
-//    configProps.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaProperties.getGroupId().getSignUp());
+    configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+    configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+    configProps.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaProperties.getGroupId());
     return new DefaultKafkaConsumerFactory<>(configProps);
   }
 
