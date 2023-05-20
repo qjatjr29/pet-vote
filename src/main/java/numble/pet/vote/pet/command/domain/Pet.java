@@ -46,10 +46,25 @@ public class Pet extends BaseEntity {
   private String description;
 
   @Column(name = " vote_count")
-  private Long voteCount;
+  @Builder.Default
+  private Long voteCount = 0L;
 
   @Column(name = "is_delete")
   @Builder.Default
   private Boolean isDeleted = Boolean.FALSE;
 
+  public void increaseVoteCount() {
+    this.voteCount++;
+  }
+
+  public void decreaseVoteCount() {
+    this.voteCount--;
+  }
+
+  public void update(String name, Species species, String description, String image) {
+    this.name = name;
+    this.species = species;
+    this.description = description;
+    this.image = image;
+  }
 }

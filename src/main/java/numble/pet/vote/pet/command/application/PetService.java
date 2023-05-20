@@ -35,4 +35,18 @@ public class PetService {
     return savedPet;
   }
 
+  public Pet update(Long id, String name, String species, String description, String image) {
+
+    // todo: exception 변경
+    Pet pet = petRepository.findById(id)
+        .orElseThrow(RuntimeException::new);
+
+    pet.update(name, Species.of(species), description, image);
+    Pet updatedPet = petRepository.save(pet);
+
+    PetUpdatedEvent petUpdatedEvent = new PetUpdatedEvent(updatedPet.getId(), PetEventType.UPDATE);
+    Events.raise(petUpdatedEvent);
+
+    return updatedPet;
+  }
 }
