@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,6 +56,12 @@ public class PetController {
   public ResponseEntity<PetDetailResponse> findPetById(@PathVariable Long petId) {
     PetDetailResponse response = petQueryService.findPetById(petId);
     return ResponseEntity.ok(response);
+  }
+
+  @DeleteMapping("/{petId}")
+  public ResponseEntity<Void> delete(@PathVariable Long petId) {
+    petService.delete(petId);
+    return ResponseEntity.noContent().build();
   }
 
 }

@@ -49,4 +49,15 @@ public class PetService {
 
     return updatedPet;
   }
+
+  public void delete(Long petId) {
+    // todo : exception 변경
+    Pet pet = petRepository.findById(petId)
+        .orElseThrow(RuntimeException::new);
+    petRepository.delete(pet);
+
+    PetUpdatedEvent petUpdatedEvent = new PetUpdatedEvent(pet.getId(), PetEventType.DELETE);
+    Events.raise(petUpdatedEvent);
+
+  }
 }
