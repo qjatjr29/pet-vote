@@ -1,6 +1,8 @@
 package numble.pet.vote.pet.command.application;
 
 import numble.pet.vote.common.event.Events;
+import numble.pet.vote.common.exception.ErrorCode;
+import numble.pet.vote.common.exception.NotFoundException;
 import numble.pet.vote.pet.command.domain.Pet;
 import numble.pet.vote.pet.command.domain.PetEventType;
 import numble.pet.vote.pet.command.domain.PetRepository;
@@ -37,9 +39,8 @@ public class PetService {
 
   public Pet update(Long id, String name, String species, String description, String image) {
 
-    // todo: exception 변경
     Pet pet = petRepository.findById(id)
-        .orElseThrow(RuntimeException::new);
+        .orElseThrow(() -> new NotFoundException(ErrorCode.PET_NOT_FOUND));
 
     pet.update(name, Species.of(species), description, image);
     Pet updatedPet = petRepository.save(pet);
@@ -51,10 +52,9 @@ public class PetService {
   }
 
   public void delete(Long petId) {
-    // todo : exception 변경
+
     Pet pet = petRepository.findById(petId)
-        .orElseThrow(RuntimeException::new);
-    petRepository.delete(pet);
+        .orElseThrow(() -> new NotFoundException(ErrorCode.PET_NOT_FOUND));
 
     PetUpdatedEvent petUpdatedEvent = new PetUpdatedEvent(pet.getId(), PetEventType.DELETE);
     Events.raise(petUpdatedEvent);

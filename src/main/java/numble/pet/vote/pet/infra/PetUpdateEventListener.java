@@ -2,8 +2,9 @@ package numble.pet.vote.pet.infra;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import numble.pet.vote.common.exception.ErrorCode;
+import numble.pet.vote.common.exception.NotFoundException;
 import numble.pet.vote.pet.command.domain.Pet;
 import numble.pet.vote.pet.command.domain.PetEventType;
 import numble.pet.vote.pet.command.domain.PetRepository;
@@ -46,9 +47,8 @@ public class PetUpdateEventListener {
       Long petId = petUpdatedEvent.getPetId();
       PetEventType petEventType = petUpdatedEvent.getPetEventType();
 
-      // todo : exception
       Pet pet = petRepository.findById(petId)
-          .orElseThrow(() -> new RuntimeException());
+          .orElseThrow(() -> new NotFoundException(ErrorCode.PET_NOT_FOUND));
 
       if(petEventType.equals(PetEventType.CREATE) || petEventType.equals(PetEventType.UPDATE)) {
 
