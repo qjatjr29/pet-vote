@@ -14,6 +14,8 @@ public enum ErrorCode {
   INVALID_ROLE(403, "USER-003", "권한이 부족한 경우"),
   WRONG_PASSWORD(400, "USER-004", "비밀번호가 잘 못 입력된 경우"),
 
+  PET_NOT_FOUND(404, "PET-001", "찾고자 하는 펫이 없는 경우"),
+
   EXPIRED_VERIFICATION_TOKEN(403, "AUTH-001", "인증 토큰이 만료된 경우"),
   INVALID_VERIFICATION_TOKEN(403, "AUTH-002", "토큰이 유효하지 않은 경우"),
   CERTIFICATION_TYPE_NOT_MATCH(403, "AUTH-003", "인증 타입이 일치하지 않은 경우"),
