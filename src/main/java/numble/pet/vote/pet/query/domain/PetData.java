@@ -21,6 +21,9 @@ public class PetData implements Serializable {
   @Id
   private Long id;
 
+  @Field(name = "pet_id")
+  private Long petId;
+
   @Field(name = "pet_name")
   private String name;
 
@@ -42,4 +45,11 @@ public class PetData implements Serializable {
   @Field(name = "updated_at")
   private LocalDateTime updatedAt;
 
+  public void addVoteCount(Long count) {
+    this.voteCount += count;
+  }
+
+  public void subtractVoteCount(Long count) {
+    this.voteCount -= count;
+  }
 }
