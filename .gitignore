@@ -171,3 +171,5 @@ gradle-app.setting
 
 .idea
 HELP.md
+application.yaml
+application.yml
