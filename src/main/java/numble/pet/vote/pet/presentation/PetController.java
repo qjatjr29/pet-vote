@@ -1,6 +1,8 @@
 package numble.pet.vote.pet.presentation;
 
 import numble.pet.vote.pet.command.application.PetService;
+import numble.pet.vote.pet.command.application.RegisterPetRequest;
+import numble.pet.vote.pet.command.domain.Pet;
 import numble.pet.vote.pet.query.application.PetDetailResponse;
 import numble.pet.vote.pet.query.application.PetQueryService;
 import numble.pet.vote.pet.query.application.PetSummaryResponse;
@@ -10,6 +12,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,6 +28,13 @@ public class PetController {
       PetQueryService petQueryService) {
     this.petService = petService;
     this.petQueryService = petQueryService;
+  }
+
+  @PostMapping
+  public ResponseEntity<Pet> registerPet(@RequestBody RegisterPetRequest request) {
+
+    Pet pet = petService.register(request.getName(), request.getSpecies(), request.getDescription(), request.getImage());
+    return ResponseEntity.ok(pet);
   }
 
   @GetMapping
