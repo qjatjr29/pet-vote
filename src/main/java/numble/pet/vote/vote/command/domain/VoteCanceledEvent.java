@@ -8,6 +8,10 @@ public class VoteCanceledEvent {
 
   private Long petId;
 
+  public VoteCanceledEvent(Long petId) {
+    this.petId = petId;
+  }
+
   public Long getPetId() {
     return petId;
   }

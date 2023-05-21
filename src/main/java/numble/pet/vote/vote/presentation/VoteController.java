@@ -27,4 +27,10 @@ public class VoteController {
     Vote vote = voteService.submit(request.getEmail(), request.getPetId());
     return ResponseEntity.created(URI.create("")).body(vote);
   }
+
+  @DeleteMapping("/cancel")
+  public ResponseEntity<Void> cancel(@RequestBody VoteCancelRequest request) {
+    voteService.cancel(request.getEmail(), request.getPetId());
+    return ResponseEntity.noContent().build();
+  }
 }

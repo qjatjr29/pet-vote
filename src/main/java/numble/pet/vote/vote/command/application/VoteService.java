@@ -6,6 +6,7 @@ import numble.pet.vote.common.exception.NotFoundException;
 import numble.pet.vote.pet.command.domain.Pet;
 import numble.pet.vote.pet.command.domain.PetRepository;
 import numble.pet.vote.vote.command.domain.Vote;
+import numble.pet.vote.vote.command.domain.VoteCanceledEvent;
 import numble.pet.vote.vote.command.domain.VoteRepository;
 import numble.pet.vote.vote.command.domain.VoteSubmittedEvent;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,6 @@ public class VoteService {
   @Transactional
   public Vote submit(String email, Long petId) {
 
-    // todo: exception 처리
     Pet pet = petRepository.findById(petId)
         .orElseThrow(() -> new NotFoundException(ErrorCode.PET_NOT_FOUND));
 
@@ -37,6 +37,17 @@ public class VoteService {
     Events.raise(new VoteSubmittedEvent(petId));
     Vote newVote = new Vote(email, petId);
     return voteRepository.save(newVote);
+  }
+
+  public void cancel(String email, Long petId) {
+
+    Pet pet = petRepository.findById(petId)
+        .orElseThrow(() -> new NotFoundException(ErrorCode.PET_NOT_FOUND));
+
+    pet.decreaseVoteCount();
+    petRepository.save(pet);
+    Events.raise(new VoteCanceledEvent(petId));
+    voteRepository.deleteByEmail(email);
   }
 
   // todo : @Cacheable

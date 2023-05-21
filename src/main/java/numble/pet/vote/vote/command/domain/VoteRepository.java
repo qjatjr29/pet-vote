@@ -8,4 +8,6 @@ public interface VoteRepository extends JpaRepository<Vote, Long> {
 
   @Query("SELECT v FROM Vote v WHERE v.email =:email")
   Boolean existsByEmail(@Param("email") String email);
+
+  void deleteByEmail(String email);
 }
