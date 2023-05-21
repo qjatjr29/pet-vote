@@ -1,9 +1,12 @@
 package numble.pet.vote.vote.presentation;
 
+import java.net.URI;
+import numble.pet.vote.vote.command.application.VoteCancelRequest;
 import numble.pet.vote.vote.command.application.VoteService;
 import numble.pet.vote.vote.command.application.VoteSubmitRequest;
 import numble.pet.vote.vote.command.domain.Vote;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,8 +23,8 @@ public class VoteController {
   }
 
   @PostMapping("/submit")
-  public ResponseEntity<Void> submit(@RequestBody VoteSubmitRequest request) {
-    voteService.submit(request.getEmail(), request.getPetId());
-    return ResponseEntity.noContent().build();
+  public ResponseEntity<Vote> submit(@RequestBody VoteSubmitRequest request) {
+    Vote vote = voteService.submit(request.getEmail(), request.getPetId());
+    return ResponseEntity.created(URI.create("")).body(vote);
   }
 }
