@@ -34,7 +34,7 @@ public class VoteCanceledEventListener {
     this.redisTemplate = redisTemplate;
   }
 
-  @KafkaListener(topics = "${spring.kafka.topic.vote-cancel-event}")
+  @KafkaListener(topics = "${spring.kafka.topic.vote-cancel-event}", groupId = "${spring.kafka.group-id}")
   public void submit(String message) {
     try {
       VoteCanceledEvent voteCanceledEvent = objectMapper.readValue(message, VoteCanceledEvent.class);

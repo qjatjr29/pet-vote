@@ -39,7 +39,7 @@ public class PetUpdateEventListener {
     this.redisTemplate = redisTemplate;
   }
 
-  @KafkaListener(topics = "${spring.kafka.topic.pet-update-event}")
+  @KafkaListener(topics = "${spring.kafka.topic.pet-update-event}", groupId = "${spring.kafka.group-id}")
   public void submit(String message) {
     try {
       PetUpdatedEvent petUpdatedEvent = objectMapper.readValue(message, PetUpdatedEvent.class);

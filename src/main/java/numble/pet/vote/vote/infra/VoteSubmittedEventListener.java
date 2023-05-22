@@ -35,7 +35,7 @@ public class VoteSubmittedEventListener {
     this.redisTemplate = redisTemplate;
   }
 
-  @KafkaListener(topics = "${spring.kafka.topic.vote-submit-event}")
+  @KafkaListener(topics = "${spring.kafka.topic.vote-submit-event}", groupId = "${spring.kafka.group-id}")
   public void submit(String message) {
     try {
       VoteSubmittedEvent voteSubmittedEvent = objectMapper.readValue(message, VoteSubmittedEvent.class);
