@@ -49,7 +49,7 @@ public class Pet extends BaseEntity {
   @Builder.Default
   private Long voteCount = 0L;
 
-  @Column(name = "is_delete")
+  @Column(name = "is_deleted")
   @Builder.Default
   private Boolean isDeleted = Boolean.FALSE;
 
