@@ -15,4 +15,12 @@ public class VoteCanceledEvent {
   public Long getPetId() {
     return petId;
   }
+
+  @Override
+  public String toString() {
+    final StringBuilder sb = new StringBuilder("VoteCanceledEvent{");
+    sb.append("petId=").append(petId);
+    sb.append('}');
+    return sb.toString();
+  }
 }

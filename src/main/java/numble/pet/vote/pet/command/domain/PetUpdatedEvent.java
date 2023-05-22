@@ -23,4 +23,13 @@ public class PetUpdatedEvent extends Event {
   public PetEventType getPetEventType() {
     return petEventType;
   }
+
+  @Override
+  public String toString() {
+    final StringBuilder sb = new StringBuilder("PetUpdatedEvent{");
+    sb.append("petId=").append(petId);
+    sb.append(", petEventType=").append(petEventType);
+    sb.append('}');
+    return sb.toString();
+  }
 }
