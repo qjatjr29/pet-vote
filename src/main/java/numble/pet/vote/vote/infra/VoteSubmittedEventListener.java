@@ -61,7 +61,7 @@ public class VoteSubmittedEventListener {
       Long petId = Long.valueOf(petIdStr);
 
       // MongoDB에서 해당 PetId에 대한 데이터를 가져오고, count 값만큼 voteCount를 증가시킴
-      PetData petData = petQueryRepository.findByPetId(petId)
+      PetData petData = petQueryRepository.findById(petId)
           .orElseThrow(RuntimeException::new);
 
       petData.addVoteCount(count);
