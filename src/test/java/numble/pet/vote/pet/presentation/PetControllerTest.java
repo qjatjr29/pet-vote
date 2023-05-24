@@ -6,6 +6,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -19,6 +20,9 @@ import numble.pet.vote.pet.command.application.RegisterPetRequest;
 import numble.pet.vote.pet.command.domain.Pet;
 import numble.pet.vote.pet.command.domain.Species;
 import numble.pet.vote.pet.infra.AwsS3Service;
+import numble.pet.vote.pet.query.application.PetDetailResponse;
+import numble.pet.vote.pet.query.application.PetQueryService;
+import numble.pet.vote.pet.query.domain.PetData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,6 +41,9 @@ class PetControllerTest extends BaseControllerTest {
 
   @MockBean
   private PetService petService;
+
+  @MockBean
+  private PetQueryService petQueryService;
 
   @MockBean
   private AwsS3Service awsS3Service;
@@ -63,7 +70,7 @@ class PetControllerTest extends BaseControllerTest {
 
   @Test
   @DisplayName("PET 등록 성공 테스트")
-  void register_pet_success() throws Exception {
+  void registerPet_success() throws Exception {
 
     // given
     RegisterPetRequest registerPetRequest = new RegisterPetRequest(petName, species, description);
@@ -103,7 +110,7 @@ class PetControllerTest extends BaseControllerTest {
 
   @Test
   @DisplayName("PET 이미지 등록 성공 테스트")
-  void register_pet_image_success() throws Exception {
+  void registerPetImage_success() throws Exception {
 
     // given
     String imageUrl = "https://example.com/test.jpeg";
@@ -138,5 +145,90 @@ class PetControllerTest extends BaseControllerTest {
                 fieldWithPath("createdAt").type(JsonFieldType.VARIES).description("생성 일자"),
                 fieldWithPath("updatedAt").type(JsonFieldType.VARIES).description("수정 일자"))
         ));
+  }
+
+  @Test
+  @DisplayName("모든 펫 조회 테스트 ")
+  void findAllPets_success() throws Exception {
+
+    // given
+    // when
+    // then
+    mockMvc.perform(get("/pets"))
+        .andExpect(status().isOk())
+        .andDo(document("PET - 전체 pet 정보 조회 성공 API",
+            getDocumentRequest(),
+            getDocumentResponse(),
+            responseFields(
+                fieldWithPath("content").type(JsonFieldType.ARRAY).description("검색 결과 리스트"),
+                fieldWithPath("content.[].id").type(JsonFieldType.NUMBER).description("id").optional(),
+                fieldWithPath("content.[].name").type(JsonFieldType.STRING).description("이름").optional(),
+                fieldWithPath("content.[].species").type(JsonFieldType.STRING).description("종").optional(),
+                fieldWithPath("content.[].description").type(JsonFieldType.STRING).description("설명").optional(),
+                fieldWithPath("content.[].image").type(JsonFieldType.STRING).description("사진 URL").optional(),
+                fieldWithPath("content.[].voteCount").type(JsonFieldType.NUMBER).description("받은 투표 수").optional(),
+                fieldWithPath("content.[].createdAt").type(JsonFieldType.VARIES).description("생성 일자").optional(),
+
+                fieldWithPath("pageable").type(JsonFieldType.OBJECT).description("페이징 정보"),
+                fieldWithPath("pageable.sort").type(JsonFieldType.OBJECT).description("페이지 정렬 정보"),
+                fieldWithPath("pageable.sort.empty").type(JsonFieldType.BOOLEAN).description("정렬 empty"),
+                fieldWithPath("pageable.sort.unsorted").type(JsonFieldType.BOOLEAN).description("정렬 X 여부"),
+                fieldWithPath("pageable.sort.sorted").type(JsonFieldType.BOOLEAN).description("정렬 O 여부"),
+
+                fieldWithPath("pageable.pageNumber").type(JsonFieldType.NUMBER).description("페이지 번호"),
+                fieldWithPath("pageable.pageSize").type(JsonFieldType.NUMBER).description("한 페이지에 나오는 원소 수"),
+                fieldWithPath("pageable.offset").type(JsonFieldType.NUMBER).description(""),
+                fieldWithPath("pageable.unpaged").type(JsonFieldType.BOOLEAN).description(""),
+                fieldWithPath("pageable.paged").type(JsonFieldType.BOOLEAN).description(""),
+
+                fieldWithPath("totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 수"),
+                fieldWithPath("totalElements").type(JsonFieldType.NUMBER).description("전체 검색 갯수"),
+                fieldWithPath("last").type(JsonFieldType.BOOLEAN).description(""),
+                fieldWithPath("size").type(JsonFieldType.NUMBER).description("한 페이지 사이즈"),
+                fieldWithPath("number").type(JsonFieldType.NUMBER).description(""),
+                fieldWithPath("sort.empty").type(JsonFieldType.BOOLEAN).description("정렬 empty"),
+                fieldWithPath("sort.unsorted").type(JsonFieldType.BOOLEAN).description("정렬 X 여부"),
+                fieldWithPath("sort.sorted").type(JsonFieldType.BOOLEAN).description("정렬 O 여부"),
+                fieldWithPath("first").type(JsonFieldType.BOOLEAN).description(""),
+                fieldWithPath("empty").type(JsonFieldType.BOOLEAN).description(""),
+                fieldWithPath("numberOfElements").type(JsonFieldType.NUMBER).description("한 페이지의 원소 수")
+        )));
+  }
+
+  @Test
+  @DisplayName("특정 펫 조회 테스트 ")
+  void findPetById_success() throws Exception {
+
+    // given
+    PetData petdata = PetData.builder()
+        .id(mockPet.getId())
+        .name(mockPet.getName())
+        .species(mockPet.getSpecies().name())
+        .voteCount(mockPet.getVoteCount())
+        .description(mockPet.getDescription())
+        .image(mockPet.getImage())
+        .build();
+
+    PetDetailResponse response = PetDetailResponse.of(petdata);
+
+    // when
+    Mockito.when(petQueryService.findPetById(mockPet.getId())).thenReturn(response);
+    
+    // then
+    mockMvc.perform(get("/pets/{petId}", mockPet.getId()))
+        .andExpect(status().isOk())
+        .andDo(document("PET - 상세 조회 성공 API",
+            getDocumentRequest(),
+            getDocumentResponse(),
+            responseFields(
+                fieldWithPath("id").type(JsonFieldType.NUMBER).description("id"),
+                fieldWithPath("name").type(JsonFieldType.STRING).description("이름"),
+                fieldWithPath("species").type(JsonFieldType.STRING).description("종"),
+                fieldWithPath("description").type(JsonFieldType.STRING).description("설명"),
+                fieldWithPath("image").type(JsonFieldType.STRING).description("사진 URL"),
+                fieldWithPath("voteCount").type(JsonFieldType.NUMBER).description("받은 투표 수"),
+                fieldWithPath("createdAt").type(JsonFieldType.VARIES).description("생성 일자"),
+                fieldWithPath("updatedAt").type(JsonFieldType.VARIES).description("수정 일자"))
+            ));
   }
 }
