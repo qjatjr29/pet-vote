@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 public class PetService {
 
   private final PetRepository petRepository;
@@ -22,12 +22,12 @@ public class PetService {
   }
 
 
-  public Pet register(String name, String species, String description, String image) {
+  public Pet register(String name, String species, String description) {
+
     Pet pet = Pet.builder()
         .name(name)
         .species(Species.of(species))
         .description(description)
-        .image(image)
         .build();
 
     Pet savedPet = petRepository.save(pet);
@@ -35,6 +35,14 @@ public class PetService {
     PetUpdatedEvent petUpdatedEvent = new PetUpdatedEvent(savedPet.getId(), PetEventType.CREATE);
     Events.raise(petUpdatedEvent);
     return savedPet;
+  }
+
+  public Pet registerImage(Long id, String imageUrl) {
+    Pet pet = petRepository.findById(id)
+        .orElseThrow(() -> new NotFoundException(ErrorCode.PET_NOT_FOUND));
+
+    pet.changeImage(imageUrl);
+    return petRepository.save(pet);
   }
 
   public Pet update(Long id, String name, String species, String description, String image) {
