@@ -54,6 +54,7 @@ public class PetUpdateEventListener {
             .species(pet.getSpecies().name())
             .image(pet.getImage())
             .description(pet.getDescription())
+            .voteCount(pet.getVoteCount())
             .createdAt(pet.getCreatedAt())
             .updatedAt(pet.getUpdatedAt())
             .build();
