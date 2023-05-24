@@ -12,7 +12,6 @@ import numble.pet.vote.pet.command.domain.PetUpdatedEvent;
 import numble.pet.vote.pet.query.domain.PetData;
 import numble.pet.vote.pet.query.domain.PetQueryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
@@ -26,17 +25,14 @@ public class PetUpdateEventListener {
 
   private final PetRepository petRepository;
   private final PetQueryRepository petQueryRepository;
-  private final RedisTemplate<String, Object> redisTemplate;
 
   @Autowired
   private ObjectMapper objectMapper;
 
   public PetUpdateEventListener(PetRepository petRepository,
-      PetQueryRepository petQueryRepository,
-      RedisTemplate<String, Object> redisTemplate) {
+      PetQueryRepository petQueryRepository) {
     this.petRepository = petRepository;
     this.petQueryRepository = petQueryRepository;
-    this.redisTemplate = redisTemplate;
   }
 
   @KafkaListener(topics = "${spring.kafka.topic.pet-update-event}", groupId = "${spring.kafka.group-id}")
