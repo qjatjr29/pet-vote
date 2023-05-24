@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,7 +47,7 @@ public class PetController {
   }
 
   @PostMapping("/image/{petId}")
-  public ResponseEntity<Pet> registerPetImage(@PathVariable Long petId, @RequestPart(value="image") MultipartFile imageFile) {
+  public ResponseEntity<Pet> registerPetImage(@PathVariable Long petId, @RequestParam(value = "image") MultipartFile imageFile) {
     String image = awsS3Service.upload(imageFile);
     Pet pet = petService.registerImage(petId, image);
     return ResponseEntity.ok(pet);
