@@ -1,15 +1,14 @@
 package numble.pet.vote.pet.infra;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import io.netty.util.internal.StringUtil;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Optional;
+import java.io.InputStream;
+import java.net.URL;
 import lombok.extern.slf4j.Slf4j;
-import numble.pet.vote.common.exception.BadRequestException;
+import numble.pet.vote.common.exception.BusinessException;
 import numble.pet.vote.common.exception.ErrorCode;
 import numble.pet.vote.config.AwsProperties;
 import org.springframework.stereotype.Component;
@@ -32,44 +31,21 @@ public class AwsS3Service {
   public String upload(MultipartFile multipartFile){
     String filename = multipartFile.getOriginalFilename();
 
-    try {
-      File file = convertToFile(multipartFile)
-          .orElseThrow(() -> new BadRequestException(ErrorCode.FILE_CONVERT_FAIL));
-      return upload(file, filename);
+    ObjectMetadata objectMetadata = new ObjectMetadata();
+    objectMetadata.setContentLength(multipartFile.getSize());
+    objectMetadata.setContentType(multipartFile.getContentType());
+
+    URL url = null;
+
+    try(InputStream inputStream = multipartFile.getInputStream()) {
+      amazonS3Client.putObject(new PutObjectRequest(petImageBucket, filename, inputStream, objectMetadata)
+          .withCannedAcl(CannedAccessControlList.PublicRead));
+
+      url = amazonS3Client.getUrl(petImageBucket, filename);
     } catch (IOException e) {
-      log.info("file convert fail");
-      return StringUtil.EMPTY_STRING;
+      log.error("파일 업로드 실패!!!! -> {}", e.getMessage());
+      throw new BusinessException(ErrorCode.AWS_S3_UPLOAD_FAIL);
     }
-  }
-
-  private String upload(File file, String filename) {
-    String imageUrl = uploadS3(file, filename);
-    deleteLocalFile(file);
-    return imageUrl;
-  }
-
-  private Optional<File> convertToFile(MultipartFile file) throws IOException {
-    File convertFile = new File(file.getOriginalFilename());
-    if(convertFile.createNewFile()) {
-      try(FileOutputStream fos = new FileOutputStream(convertFile)){
-        fos.write(file.getBytes());
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-      return Optional.of(convertFile);
-    }
-    return Optional.empty();
-  }
-
-  private String uploadS3(File file, String filename) {
-    amazonS3Client.putObject(
-        new PutObjectRequest(petImageBucket, filename, file));
-    log.info("File upload success! => {}", filename);
-
-    return amazonS3Client.getUrl(petImageBucket, filename).toString();
-  }
-
-  private void deleteLocalFile(File file) {
-    file.delete();
+    return String.valueOf(url);
   }
 }
