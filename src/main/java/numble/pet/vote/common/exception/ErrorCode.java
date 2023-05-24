@@ -9,6 +9,8 @@ public enum ErrorCode {
   DUPLICATE_INPUT_VALUE(409, "COMMON-002", "중복된 값이 들어온 경우"),
   BAD_REQUEST(400, "COMMON-003", "잘못된 요청이 들어온 경우"),
 
+  FILE_CONVERT_FAIL(401, "AWS-001", "파일 변환에 실패한 경우"),
+
   UNAUTHORIZED(401, "USER-001", "인증에 실패한 경우"),
   USER_NOT_FOUND(404, "USER-002", "계정을 찾을 수 없는 경우"),
   INVALID_ROLE(403, "USER-003", "권한이 부족한 경우"),
