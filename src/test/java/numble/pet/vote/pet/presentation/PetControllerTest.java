@@ -16,7 +16,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.FileInputStream;
-import java.util.Optional;
 import numble.pet.vote.common.controller.BaseControllerTest;
 import numble.pet.vote.pet.command.application.PetService;
 import numble.pet.vote.pet.command.application.RegisterPetRequest;
@@ -28,14 +27,12 @@ import numble.pet.vote.pet.infra.AwsS3Service;
 import numble.pet.vote.pet.query.application.PetDetailResponse;
 import numble.pet.vote.pet.query.application.PetQueryService;
 import numble.pet.vote.pet.query.domain.PetData;
-import org.apache.kafka.common.quota.ClientQuotaAlteration.Op;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Nested;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
