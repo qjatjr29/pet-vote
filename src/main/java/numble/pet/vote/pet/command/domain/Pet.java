@@ -40,7 +40,8 @@ public class Pet extends BaseEntity {
   private Species species;
 
   @Column(name = "image_url")
-  private String image;
+  @Builder.Default
+  private String image = "";
 
   @Column(name = "description")
   private String description;
@@ -65,6 +66,14 @@ public class Pet extends BaseEntity {
     this.name = name;
     this.species = species;
     this.description = description;
+    this.image = image;
+  }
+
+  public void changeImage(String image) {
+    if(!image.isBlank()) setImage(image);
+  }
+
+  private void setImage(String image) {
     this.image = image;
   }
 }
