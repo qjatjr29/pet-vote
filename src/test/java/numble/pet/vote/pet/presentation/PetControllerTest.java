@@ -28,6 +28,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -116,7 +117,7 @@ class PetControllerTest extends BaseControllerTest {
     String imageUrl = "https://example.com/test.jpeg";
     MockMultipartFile file = new MockMultipartFile("image",
         "test_image.jpeg",
-        "image/jpeg",
+        MediaType.IMAGE_JPEG_VALUE,
         new FileInputStream("src/test/resources/image/test_image.jpeg"));
 
     // when
@@ -213,7 +214,7 @@ class PetControllerTest extends BaseControllerTest {
 
     // when
     Mockito.when(petQueryService.findPetById(mockPet.getId())).thenReturn(response);
-    
+
     // then
     mockMvc.perform(get("/pets/{petId}", mockPet.getId()))
         .andExpect(status().isOk())
