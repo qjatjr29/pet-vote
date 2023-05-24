@@ -10,6 +10,7 @@ public enum ErrorCode {
   BAD_REQUEST(400, "COMMON-003", "잘못된 요청이 들어온 경우"),
 
   FILE_CONVERT_FAIL(401, "AWS-001", "파일 변환에 실패한 경우"),
+  AWS_S3_UPLOAD_FAIL(403, "AWS-002", "S3 업로드 실패"),
 
   UNAUTHORIZED(401, "USER-001", "인증에 실패한 경우"),
   USER_NOT_FOUND(404, "USER-002", "계정을 찾을 수 없는 경우"),
