@@ -45,12 +45,12 @@ public class PetService {
     return petRepository.save(pet);
   }
 
-  public Pet update(Long id, String name, String species, String description, String image) {
+  public Pet update(Long id, String name, String species, String description) {
 
     Pet pet = petRepository.findById(id)
         .orElseThrow(() -> new NotFoundException(ErrorCode.PET_NOT_FOUND));
 
-    pet.update(name, Species.of(species), description, image);
+    pet.update(name, Species.of(species), description);
     Pet updatedPet = petRepository.save(pet);
 
     PetUpdatedEvent petUpdatedEvent = new PetUpdatedEvent(updatedPet.getId(), PetEventType.UPDATE);

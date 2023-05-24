@@ -62,11 +62,10 @@ public class Pet extends BaseEntity {
     this.voteCount--;
   }
 
-  public void update(String name, Species species, String description, String image) {
+  public void update(String name, Species species, String description) {
     this.name = name;
     this.species = species;
     this.description = description;
-    this.image = image;
   }
 
   public void changeImage(String image) {

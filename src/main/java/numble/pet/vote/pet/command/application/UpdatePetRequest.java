@@ -11,8 +11,7 @@ import lombok.NoArgsConstructor;
 public class UpdatePetRequest {
 
   private String name;
-  private String Species;
+  private String species;
   private String description;
-  private String image;
 
 }

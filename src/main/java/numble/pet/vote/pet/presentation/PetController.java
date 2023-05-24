@@ -55,7 +55,7 @@ public class PetController {
 
   @PutMapping("/{petId}")
   public ResponseEntity<Pet> updatePet(@PathVariable Long petId, @RequestBody UpdatePetRequest request) {
-    Pet pet = petService.update(petId, request.getName(), request.getSpecies(), request.getDescription(), request.getImage());
+    Pet pet = petService.update(petId, request.getName(), request.getSpecies(), request.getDescription());
     return ResponseEntity.ok(pet);
   }
 
