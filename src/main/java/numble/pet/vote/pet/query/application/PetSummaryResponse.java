@@ -1,5 +1,6 @@
 package numble.pet.vote.pet.query.application;
 
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,17 +13,23 @@ public class PetSummaryResponse {
 
   private Long id;
   private String name;
+  private String species;
   private String description;
+  private String image;
   private Long voteCount;
+  private LocalDateTime createdAt;
 
-  private PetSummaryResponse(final Long id, final String name, final String description, final Long voteCount) {
-    this.id = id;
-    this.name = name;
-    this.description = description;
-    this.voteCount = voteCount;
+  private PetSummaryResponse(final PetData pet) {
+    this.id = pet.getId();
+    this.name = pet.getName();
+    this.species = pet.getSpecies();
+    this.description = pet.getDescription();
+    this.image = pet.getImage();
+    this.voteCount = pet.getVoteCount();
+    this.createdAt = pet.getCreatedAt();
   }
 
   public static PetSummaryResponse of(final PetData pet) {
-    return new PetSummaryResponse(pet.getId(), pet.getName(), pet.getDescription(), pet.getVoteCount());
+    return new PetSummaryResponse(pet);
   }
 }
