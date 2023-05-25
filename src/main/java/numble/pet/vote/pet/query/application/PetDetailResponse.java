@@ -1,5 +1,6 @@
 package numble.pet.vote.pet.query.application;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -8,7 +9,7 @@ import numble.pet.vote.pet.query.domain.PetData;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PetDetailResponse {
+public class PetDetailResponse implements Serializable {
 
   private Long id;
   private String name;
