@@ -127,4 +127,42 @@ public class PetServiceCachingTest {
 
     verify(petQueryRepository, times(1)).findAll(pageable);
   }
+
+
+  @Test
+  @DisplayName("레디스 캐시를 삭제 테스트")
+  void givenRedisCaching_whenDeletePetById_thenPetDeletedFromCache_success() {
+
+    // given
+    // when
+    Mockito.when(petQueryRepository.findById(id)).thenReturn(Optional.of(mockPetData));
+    PetDetailResponse cacheMissResponse = petQueryService.findPetById(1L);
+    PetDetailResponse cacheHitResponse = petQueryService.findPetById(1L);
+
+    // then
+    Assertions.assertThat(cacheMissResponse.getId()).isEqualTo(1L);
+    Assertions.assertThat(cacheMissResponse.getName()).isEqualTo(name);
+    Assertions.assertThat(cacheMissResponse.getDescription()).isEqualTo(description);
+    Assertions.assertThat(cacheMissResponse.getSpecies()).isEqualTo(species);
+
+    Assertions.assertThat(cacheHitResponse.getId()).isEqualTo(1L);
+    Assertions.assertThat(cacheHitResponse.getName()).isEqualTo(name);
+    Assertions.assertThat(cacheHitResponse.getDescription()).isEqualTo(description);
+    Assertions.assertThat(cacheHitResponse.getSpecies()).isEqualTo(species);
+
+    verify(petQueryRepository, times(1)).findById(id);
+
+    petQueryService.deletePet(id);
+
+    cacheMissResponse = petQueryService.findPetById(1L);
+
+    Assertions.assertThat(cacheMissResponse.getId()).isEqualTo(1L);
+    Assertions.assertThat(cacheMissResponse.getName()).isEqualTo(name);
+    Assertions.assertThat(cacheMissResponse.getDescription()).isEqualTo(description);
+    Assertions.assertThat(cacheMissResponse.getSpecies()).isEqualTo(species);
+
+    verify(petQueryRepository, times(2)).findById(id);
+    verify(petQueryRepository, times(1)).deleteById(id);
+
+  }
 }
