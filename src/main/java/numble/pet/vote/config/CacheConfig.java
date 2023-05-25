@@ -1,12 +1,17 @@
 package numble.pet.vote.config;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectMapper.DefaultTyping;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
@@ -43,15 +48,25 @@ public class CacheConfig {
     return redisCacheManager;
   }
 
-  private ObjectMapper objectMapper() {
-
+  @Bean
+  public ObjectMapper objectMapper() {
     PolymorphicTypeValidator typeValidator = BasicPolymorphicTypeValidator.builder()
+        .allowIfSubType(Object.class)
         .build();
 
+    JavaTimeModule javaTimeModule = new JavaTimeModule();
+    // 자바 8 시간 관련 직렬화를 위한 모듈 등록
+    javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+    javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(
+        DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+
     return new ObjectMapper()
+        .findAndRegisterModules()
+        .enable(SerializationFeature.INDENT_OUTPUT)
         .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-        .registerModule(new JavaTimeModule())
-        .activateDefaultTyping(typeValidator, DefaultTyping.NON_FINAL);
+        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        .activateDefaultTyping(typeValidator, DefaultTyping.NON_FINAL)
+        .registerModule(javaTimeModule);
   }
 
 }
