@@ -3,6 +3,7 @@ package numble.pet.vote.pet.query.application;
 import numble.pet.vote.common.presentation.RestPage;
 import numble.pet.vote.pet.query.domain.PetQueryRepository;
 import numble.pet.vote.pet.query.domain.PetData;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +31,11 @@ public class PetQueryService {
         .orElseThrow(RuntimeException::new);
 
     return PetDetailResponse.of(petData);
+  }
+
+  @CacheEvict(key = "#id", value = "petCacheStore")
+  public void deletePet(Long id) {
+    petQueryRepository.deleteById(id);
   }
 
 }
