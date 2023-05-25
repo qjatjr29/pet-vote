@@ -16,7 +16,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.List;
 import numble.pet.vote.common.controller.BaseControllerTest;
+
+import numble.pet.vote.common.presentation.RestPage;
 import numble.pet.vote.pet.command.application.PetService;
 import numble.pet.vote.pet.command.application.RegisterPetRequest;
 import numble.pet.vote.pet.command.application.UpdatePetRequest;
@@ -26,6 +30,7 @@ import numble.pet.vote.pet.command.domain.Species;
 import numble.pet.vote.pet.infra.AwsS3Service;
 import numble.pet.vote.pet.query.application.PetDetailResponse;
 import numble.pet.vote.pet.query.application.PetQueryService;
+import numble.pet.vote.pet.query.application.PetSummaryResponse;
 import numble.pet.vote.pet.query.domain.PetData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,6 +39,10 @@ import org.junit.jupiter.api.Nested;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -168,7 +177,27 @@ class PetControllerTest extends BaseControllerTest {
     void findAllPets_success() throws Exception {
 
       // given
+      PetData mockPetData = PetData.builder()
+          .id(mockPet.getId())
+          .name(mockPet.getName())
+          .species(mockPet.getSpecies().name())
+          .voteCount(mockPet.getVoteCount())
+          .description(mockPet.getDescription())
+          .image(mockPet.getImage())
+          .createdAt(mockPet.getCreatedAt())
+          .updatedAt(mockPet.getUpdatedAt())
+          .build();
+
+      List<PetData> petDataList = new ArrayList<>();
+      petDataList.add(mockPetData);
+
+      Pageable pageable = PageRequest.of(0, 10);
+      Page<PetData> petDataPage = new PageImpl<>(petDataList, pageable, petDataList.size());
+      RestPage<PetSummaryResponse> petSummaryResponses = new RestPage<>(petDataPage.map(PetSummaryResponse::of));
+
       // when
+      Mockito.when(petQueryService.findAllPets(Mockito.any(Pageable.class))).thenReturn(petSummaryResponses);
+
       // then
       mockMvc.perform(get("/pets"))
           .andExpect(status().isOk())
@@ -184,18 +213,6 @@ class PetControllerTest extends BaseControllerTest {
                   fieldWithPath("content.[].image").type(JsonFieldType.STRING).description("사진 URL").optional(),
                   fieldWithPath("content.[].voteCount").type(JsonFieldType.NUMBER).description("받은 투표 수").optional(),
                   fieldWithPath("content.[].createdAt").type(JsonFieldType.VARIES).description("생성 일자").optional(),
-
-                  fieldWithPath("pageable").type(JsonFieldType.OBJECT).description("페이징 정보"),
-                  fieldWithPath("pageable.sort").type(JsonFieldType.OBJECT).description("페이지 정렬 정보"),
-                  fieldWithPath("pageable.sort.empty").type(JsonFieldType.BOOLEAN).description("정렬 empty"),
-                  fieldWithPath("pageable.sort.unsorted").type(JsonFieldType.BOOLEAN).description("정렬 X 여부"),
-                  fieldWithPath("pageable.sort.sorted").type(JsonFieldType.BOOLEAN).description("정렬 O 여부"),
-
-                  fieldWithPath("pageable.pageNumber").type(JsonFieldType.NUMBER).description("페이지 번호"),
-                  fieldWithPath("pageable.pageSize").type(JsonFieldType.NUMBER).description("한 페이지에 나오는 원소 수"),
-                  fieldWithPath("pageable.offset").type(JsonFieldType.NUMBER).description(""),
-                  fieldWithPath("pageable.unpaged").type(JsonFieldType.BOOLEAN).description(""),
-                  fieldWithPath("pageable.paged").type(JsonFieldType.BOOLEAN).description(""),
 
                   fieldWithPath("totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 수"),
                   fieldWithPath("totalElements").type(JsonFieldType.NUMBER).description("전체 검색 갯수"),
