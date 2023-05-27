@@ -9,6 +9,7 @@ import numble.pet.vote.pet.command.domain.Pet;
 import numble.pet.vote.pet.command.domain.PetEventType;
 import numble.pet.vote.pet.command.domain.PetRepository;
 import numble.pet.vote.pet.command.domain.PetUpdatedEvent;
+import numble.pet.vote.pet.query.application.PetQueryService;
 import numble.pet.vote.pet.query.domain.PetData;
 import numble.pet.vote.pet.query.domain.PetQueryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,20 +20,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class PetUpdateEventListener {
 
-  private static final String PET_CREATE_EVENT_BUFFER = "pet_create_event_buffer";
-  private static final String PET_UPDATE_EVENT_BUFFER = "pet_update_event_buffer";
-  private static final String PET_DELETE_EVENT_BUFFER = "pet_delete_event_buffer";
-
   private final PetRepository petRepository;
   private final PetQueryRepository petQueryRepository;
+  private final PetQueryService petQueryService;
 
   @Autowired
   private ObjectMapper objectMapper;
 
   public PetUpdateEventListener(PetRepository petRepository,
-      PetQueryRepository petQueryRepository) {
+      PetQueryRepository petQueryRepository,
+      PetQueryService petQueryService) {
     this.petRepository = petRepository;
     this.petQueryRepository = petQueryRepository;
+    this.petQueryService = petQueryService;
   }
 
   @KafkaListener(topics = "${spring.kafka.topic.pet-update-event}", groupId = "${spring.kafka.group-id}")
@@ -46,10 +46,10 @@ public class PetUpdateEventListener {
       Pet pet = petRepository.findById(petId)
           .orElseThrow(() -> new NotFoundException(ErrorCode.PET_NOT_FOUND));
 
-      if(petEventType.equals(PetEventType.CREATE) || petEventType.equals(PetEventType.UPDATE)) {
+      if(petEventType.equals(PetEventType.CREATE)) {
 
         PetData petData = PetData.builder()
-            .id(pet.getId())
+            .petId(pet.getId())
             .name(pet.getName())
             .species(pet.getSpecies().name())
             .image(pet.getImage())
@@ -59,10 +59,13 @@ public class PetUpdateEventListener {
             .updatedAt(pet.getUpdatedAt())
             .build();
 
-        petQueryRepository.save(petData);
+        petQueryService.savePet(petData.getPetId(), petData);
+      }
+      else if(petEventType.equals(PetEventType.UPDATE)) {
+        petQueryService.updatePet(pet.getId(), pet.getName(), pet.getSpecies().name(), pet.getDescription());
       }
       else if(petEventType.equals(PetEventType.DELETE)) {
-        petQueryRepository.deleteById(petId);
+        petQueryService.deletePetById(petId);
       }
     } catch (JsonProcessingException e) {
       log.error("Error - vote submit");
