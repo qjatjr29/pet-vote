@@ -24,7 +24,8 @@ public enum ErrorCode {
   CERTIFICATION_TYPE_NOT_MATCH(403, "AUTH-003", "인증 타입이 일치하지 않은 경우"),
   TOKEN_NOT_EXISTS(404, "AUTH-004", "인증 토큰이 존재하지 않는 경우"),
 
-  ALREADY_VOTE(409, "VOTE-001", "이미 투표를 한 경우");
+  ALREADY_VOTE(409, "VOTE-001", "이미 투표를 한 경우"),
+  NOT_FOUND_VOTE_EMAIL(404, "VOTE-002", "해당 이메일로 투표를 하지 않은 경우");
 
   int statusCode;
   String errorCode;
