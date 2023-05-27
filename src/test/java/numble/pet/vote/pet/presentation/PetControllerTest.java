@@ -178,7 +178,7 @@ class PetControllerTest extends BaseControllerTest {
 
       // given
       PetData mockPetData = PetData.builder()
-          .id(mockPet.getId())
+          .petId(mockPet.getId())
           .name(mockPet.getName())
           .species(mockPet.getSpecies().name())
           .voteCount(mockPet.getVoteCount())
@@ -206,7 +206,7 @@ class PetControllerTest extends BaseControllerTest {
               getDocumentResponse(),
               responseFields(
                   fieldWithPath("content").type(JsonFieldType.ARRAY).description("검색 결과 리스트"),
-                  fieldWithPath("content.[].id").type(JsonFieldType.NUMBER).description("id").optional(),
+                  fieldWithPath("content.[].petId").type(JsonFieldType.NUMBER).description("id").optional(),
                   fieldWithPath("content.[].name").type(JsonFieldType.STRING).description("이름").optional(),
                   fieldWithPath("content.[].species").type(JsonFieldType.STRING).description("종").optional(),
                   fieldWithPath("content.[].description").type(JsonFieldType.STRING).description("설명").optional(),
@@ -234,7 +234,7 @@ class PetControllerTest extends BaseControllerTest {
 
       // given
       PetData petdata = PetData.builder()
-          .id(mockPet.getId())
+          .petId(mockPet.getId())
           .name(mockPet.getName())
           .species(mockPet.getSpecies().name())
           .voteCount(mockPet.getVoteCount())
@@ -254,7 +254,7 @@ class PetControllerTest extends BaseControllerTest {
               getDocumentRequest(),
               getDocumentResponse(),
               responseFields(
-                  fieldWithPath("id").type(JsonFieldType.NUMBER).description("id"),
+                  fieldWithPath("petId").type(JsonFieldType.NUMBER).description("id"),
                   fieldWithPath("name").type(JsonFieldType.STRING).description("이름"),
                   fieldWithPath("species").type(JsonFieldType.STRING).description("종"),
                   fieldWithPath("description").type(JsonFieldType.STRING).description("설명"),
