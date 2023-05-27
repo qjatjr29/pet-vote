@@ -1,5 +1,7 @@
 package numble.pet.vote.pet.query.application;
 
+import numble.pet.vote.common.exception.ErrorCode;
+import numble.pet.vote.common.exception.NotFoundException;
 import numble.pet.vote.common.presentation.RestPage;
 import numble.pet.vote.pet.query.domain.PetQueryRepository;
 import numble.pet.vote.pet.query.domain.PetData;
@@ -20,6 +22,12 @@ public class PetQueryService {
     this.petQueryRepository = petQueryRepository;
   }
 
+  @Transactional
+  @Cacheable(key = "#id", value = "petCacheStore")
+  public void savePet(Long id, PetData petData) {
+    petQueryRepository.save(petData);
+  }
+
   @Cacheable(value = "petCacheStore")
   public Page<PetSummaryResponse> findAllPets(Pageable pageable) {
     return new RestPage<>(petQueryRepository.findAll(pageable).map(PetSummaryResponse::of));
@@ -27,15 +35,24 @@ public class PetQueryService {
 
   @Cacheable(key = "#id", value = "petCacheStore")
   public PetDetailResponse findPetById(Long id) {
-    PetData petData = petQueryRepository.findById(id)
-        .orElseThrow(RuntimeException::new);
+    PetData petData = petQueryRepository.findByPetId(id)
+        .orElseThrow(() -> new NotFoundException(ErrorCode.PET_NOT_FOUND));
 
     return PetDetailResponse.of(petData);
   }
 
+  @Transactional
   @CacheEvict(key = "#id", value = "petCacheStore")
-  public void deletePet(Long id) {
-    petQueryRepository.deleteById(id);
+  public void deletePetById(Long id) {
+    petQueryRepository.deleteByPetId(id);
   }
 
+  @Transactional
+  @CacheEvict(key = "#id", value = "petCacheStore")
+  public void updatePet(Long id, String name, String species, String description) {
+    PetData petData = petQueryRepository.findByPetId(id)
+        .orElseThrow(() -> new NotFoundException(ErrorCode.PET_NOT_FOUND));
+    petData.update(name, species, description);
+    petQueryRepository.save(petData);
+  }
 }
