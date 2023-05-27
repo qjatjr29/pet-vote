@@ -45,11 +45,11 @@ public class PetData implements Serializable {
   @Field(name = "updated_at")
   private LocalDateTime updatedAt;
 
-  public void addVoteCount(Long count) {
+  public void addVoteCount(int count) {
     this.voteCount += count;
   }
 
-  public void subtractVoteCount(Long count) {
+  public void subtractVoteCount(int count) {
     this.voteCount -= count;
   }
 
