@@ -52,6 +52,7 @@ public class PetService {
 
     pet.update(name, Species.of(species), description);
     Pet updatedPet = petRepository.save(pet);
+    petRepository.flush();
 
     PetUpdatedEvent petUpdatedEvent = new PetUpdatedEvent(updatedPet.getId(), PetEventType.UPDATE);
     Events.raise(petUpdatedEvent);
@@ -64,6 +65,7 @@ public class PetService {
     Pet pet = petRepository.findById(petId)
         .orElseThrow(() -> new NotFoundException(ErrorCode.PET_NOT_FOUND));
 
+    petRepository.deleteById(petId);
     PetUpdatedEvent petUpdatedEvent = new PetUpdatedEvent(pet.getId(), PetEventType.DELETE);
     Events.raise(petUpdatedEvent);
 
