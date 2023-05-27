@@ -59,6 +59,14 @@ public class PetData implements Serializable {
     if(!description.isBlank()) setDescription(description);
   }
 
+  public void synchronization(String name, String species, String description, String image, Long voteCount) {
+    this.name = name;
+    this.species = species;
+    this.description = description;
+    this.image = image;
+    this.voteCount = voteCount;
+  }
+
   private void setName(String name) {
     this.name = name;
   }
