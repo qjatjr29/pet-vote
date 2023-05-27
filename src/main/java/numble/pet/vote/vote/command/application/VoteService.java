@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class VoteService {
 
   private final VoteRepository voteRepository;
@@ -24,7 +25,6 @@ public class VoteService {
     this.petRepository = petRepository;
   }
 
-  @Transactional
   public Vote submit(String email, Long petId) {
 
     Pet pet = petRepository.findById(petId)
@@ -32,8 +32,6 @@ public class VoteService {
 
     if(isAlreadyVotedEmail(email)) throw new RuntimeException();
 
-    pet.increaseVoteCount();
-    petRepository.save(pet);
     Events.raise(new VoteSubmittedEvent(petId));
     Vote newVote = new Vote(email, petId);
     return voteRepository.save(newVote);
@@ -41,16 +39,15 @@ public class VoteService {
 
   public void cancel(String email, Long petId) {
 
+    if(!isAlreadyVotedEmail(email)) throw new NotFoundException(ErrorCode.NOT_FOUND_VOTE_EMAIL);
+
     Pet pet = petRepository.findById(petId)
         .orElseThrow(() -> new NotFoundException(ErrorCode.PET_NOT_FOUND));
 
-    pet.decreaseVoteCount();
-    petRepository.save(pet);
     Events.raise(new VoteCanceledEvent(petId));
     voteRepository.deleteByEmail(email);
   }
 
-  // todo : @Cacheable
   public Boolean isAlreadyVotedEmail(String email) {
     return voteRepository.existsByEmail(email);
   }
