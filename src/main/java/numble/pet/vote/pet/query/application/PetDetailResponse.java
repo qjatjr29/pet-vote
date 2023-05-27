@@ -11,7 +11,7 @@ import numble.pet.vote.pet.query.domain.PetData;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PetDetailResponse implements Serializable {
 
-  private Long id;
+  private Long petId;
   private String name;
   private String species;
   private String description;
@@ -21,7 +21,7 @@ public class PetDetailResponse implements Serializable {
   private LocalDateTime updatedAt;
 
   private PetDetailResponse(final PetData pet) {
-    this.id = pet.getId();
+    this.petId = pet.getPetId();
     this.name = pet.getName();
     this.species = pet.getSpecies();
     this.description = pet.getDescription();
