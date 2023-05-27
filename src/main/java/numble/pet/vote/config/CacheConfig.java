@@ -48,8 +48,7 @@ public class CacheConfig {
     return redisCacheManager;
   }
 
-  @Bean
-  public ObjectMapper objectMapper() {
+  private ObjectMapper objectMapper() {
     PolymorphicTypeValidator typeValidator = BasicPolymorphicTypeValidator.builder()
         .allowIfSubType(Object.class)
         .build();
