@@ -19,7 +19,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 public class PetData implements Serializable {
 
   @Id
-  private Long id;
+  private String id;
 
   @Field(name = "pet_id")
   private Long petId;
@@ -51,5 +51,23 @@ public class PetData implements Serializable {
 
   public void subtractVoteCount(Long count) {
     this.voteCount -= count;
+  }
+
+  public void update(String name, String species, String description) {
+    if(!name.isBlank()) setName(name);
+    if(!species.isBlank()) setSpecies(species);
+    if(!description.isBlank()) setDescription(description);
+  }
+
+  private void setName(String name) {
+    this.name = name;
+  }
+
+  private void setSpecies(String species) {
+    this.species = species;
+  }
+
+  private void setDescription(String description) {
+    this.description = description;
   }
 }
