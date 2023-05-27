@@ -70,4 +70,20 @@ public class PetService {
     Events.raise(petUpdatedEvent);
 
   }
+
+  public void cancelVote(Long petId, int count) {
+    Pet pet = petRepository.findById(petId)
+        .orElseThrow(() -> new NotFoundException(ErrorCode.PET_NOT_FOUND));
+
+    pet.cancelVote(count);
+    petRepository.save(pet);
+  }
+
+  public void submitVote(Long petId, int count) {
+    Pet pet = petRepository.findById(petId)
+        .orElseThrow(() -> new NotFoundException(ErrorCode.PET_NOT_FOUND));
+
+    pet.submitVote(count);
+    petRepository.save(pet);
+  }
 }

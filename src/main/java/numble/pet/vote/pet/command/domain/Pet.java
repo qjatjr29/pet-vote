@@ -54,14 +54,6 @@ public class Pet extends BaseEntity {
   @Builder.Default
   private Boolean isDeleted = Boolean.FALSE;
 
-  public void increaseVoteCount() {
-    this.voteCount++;
-  }
-
-  public void decreaseVoteCount() {
-    this.voteCount--;
-  }
-
   public void update(String name, Species species, String description) {
     this.name = name;
     this.species = species;
@@ -70,6 +62,14 @@ public class Pet extends BaseEntity {
 
   public void changeImage(String image) {
     if(!image.isBlank()) setImage(image);
+  }
+
+  public void submitVote(int count) {
+    this.voteCount += count;
+  }
+
+  public void cancelVote(int count) {
+    this.voteCount -= count;
   }
 
   private void setImage(String image) {
