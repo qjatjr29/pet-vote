@@ -15,4 +15,8 @@ public interface PetQueryRepository extends MongoRepository<PetData, Long> {
 
   @Query("{ 'id' : ?0 }")
   Optional<PetData> findById(Long id);
+
+  Optional<PetData> findByPetId(Long id);
+
+  void deleteByPetId(Long petId);
 }
