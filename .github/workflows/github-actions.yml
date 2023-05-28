@@ -36,6 +36,7 @@ jobs:
           touch ./src/main/resources/application.yml
           echo "${{ secrets.APPLICATION }}" >> ./src/main/resources/application.yml
         shell: bash
+
       #        env:
       #          APPLICATION: ${{ secrets.APPLICATION }}
       - uses: actions/upload-artifact@v2
