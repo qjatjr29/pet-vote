@@ -38,9 +38,6 @@ public class VoteSubmittedEventListener {
   public void submit(String message) {
     try {
       VoteSubmittedEvent voteSubmittedEvent = objectMapper.readValue(message, VoteSubmittedEvent.class);
-      System.out.println("----------------submit event--------------");
-      System.out.println(voteSubmittedEvent.getPetId());
-      System.out.println("============================");
       addEvent(voteSubmittedEvent);
     } catch (JsonProcessingException e) {
       log.error("Error - vote submit");
@@ -51,7 +48,6 @@ public class VoteSubmittedEventListener {
   private void addEvent(VoteSubmittedEvent event) {
     Long petId = event.getPetId();
     redisTemplate.opsForHash().increment(VOTE_SUBMIT_EVENT_BUFFER_KEY, petId, 1L);
-    System.out.println("add event!");
   }
 
   @Scheduled(fixedRate = 10000)
@@ -59,9 +55,6 @@ public class VoteSubmittedEventListener {
 
     Map<Object, Object> bufferedEvents = redisTemplate.opsForHash().entries(VOTE_SUBMIT_EVENT_BUFFER_KEY);
     for (Map.Entry<Object, Object> entry : bufferedEvents.entrySet()) {
-
-      System.out.println(entry.getKey());
-      System.out.println(entry.getValue());
 
       Long petId  = (Long) entry.getKey();
       int count = (Integer) entry.getValue();
