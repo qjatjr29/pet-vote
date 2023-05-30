@@ -1,7 +1,14 @@
+buildscript {
+	ext {
+		querydsl_version = "5.0.0"
+	}
+}
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.11'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id "com.ewerk.gradle.plugins.querydsl" version '1.0.10' // query-dsl plugin 추가
 }
 
 group = 'numble.pet'
@@ -25,9 +32,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-cache'
 	implementation group: 'org.springframework.boot', name: 'spring-boot-configuration-processor'
 	implementation group: 'org.springframework.kafka', name: 'spring-kafka'
+	implementation group: 'org.mongodb', name: 'mongodb-driver-sync'
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-mongodb'
 //	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.6.RELEASE'
 	implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.472'
+	implementation group: 'com.querydsl', name: 'querydsl-mongodb'
+	annotationProcessor "com.querydsl:querydsl-apt:${querydsl_version}"
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'com.mysql:mysql-connector-j'
@@ -41,4 +51,23 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+/**
+ * query-dsl 추가
+ */
+def querydslDir = "$buildDir/generated/querydsl"
+querydsl {
+	springDataMongo = true
+//	jpa = true
+	querydslSourcesDir = querydslDir
+}
+sourceSets {
+	main.java.srcDir querydslDir
+}
+configurations {
+	querydsl.extendsFrom compileClasspath
+}
+compileQuerydsl {
+	options.annotationProcessorPath = configurations.querydsl
 }
