@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
-public interface PetQueryRepository extends MongoRepository<PetData, Long>,
+public interface PetQueryRepository extends MongoRepository<PetData, String>,
     QuerydslPredicateExecutor<PetData>,
     UserQueryRepositoryWrapper {
 
