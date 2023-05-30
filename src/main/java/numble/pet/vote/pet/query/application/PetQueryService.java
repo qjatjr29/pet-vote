@@ -34,6 +34,12 @@ public class PetQueryService {
     return new RestPage<>(petQueryRepository.findAll(pageable).map(PetSummaryResponse::of));
   }
 
+  public Page<PetSummaryResponse> findAllPetsSortedBySortType(Pageable pageable, String sortType) {
+    return petQueryRepository
+        .findAllSortedBy(SortType.of(sortType), pageable)
+        .map(PetSummaryResponse::of);
+  }
+
   @Cacheable(key = "#id", value = "petAllCacheStore")
   public PetDetailResponse findPetById(Long id) {
     PetData petData = petQueryRepository.findByPetId(id)

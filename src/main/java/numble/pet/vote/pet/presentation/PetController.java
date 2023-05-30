@@ -59,15 +59,23 @@ public class PetController {
     return ResponseEntity.ok(pet);
   }
 
-  @GetMapping
-  public ResponseEntity<Page<PetSummaryResponse>> findAllPets(@PageableDefault(page = 0, size = 15) Pageable pageable) {
-    Page<PetSummaryResponse> response = petQueryService.findAllPets(pageable);
-    return ResponseEntity.ok(response);
-  }
+//  @GetMapping
+//  public ResponseEntity<Page<PetSummaryResponse>> findAllPets(@PageableDefault(page = 0, size = 15) Pageable pageable) {
+//    Page<PetSummaryResponse> response = petQueryService.findAllPets(pageable);
+//    return ResponseEntity.ok(response);
+//  }
 
   @GetMapping("/{petId}")
   public ResponseEntity<PetDetailResponse> findPetById(@PathVariable Long petId) {
     PetDetailResponse response = petQueryService.findPetById(petId);
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping
+  public ResponseEntity<Page<PetSummaryResponse>> findAllSortedPets(
+      @PageableDefault(page = 0, size = 15) Pageable pageable,
+      @RequestParam("sort") String sortType) {
+    Page<PetSummaryResponse> response = petQueryService.findAllPetsSortedBySortType(pageable, sortType);
     return ResponseEntity.ok(response);
   }
 
