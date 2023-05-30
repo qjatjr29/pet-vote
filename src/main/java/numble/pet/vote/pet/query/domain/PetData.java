@@ -1,5 +1,6 @@
 package numble.pet.vote.pet.query.domain;
 
+import com.querydsl.core.annotations.QueryEntity;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
@@ -11,6 +12,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+@QueryEntity
 @Document(collection = "pet")
 @Getter
 @Builder

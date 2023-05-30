@@ -6,8 +6,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
-public interface PetQueryRepository extends MongoRepository<PetData, Long> {
+public interface PetQueryRepository extends MongoRepository<PetData, Long>,
+    QuerydslPredicateExecutor<PetData>,
+    UserQueryRepositoryWrapper {
 
   List<PetData> findAll();
 
