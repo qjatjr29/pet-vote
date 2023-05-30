@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import numble.pet.vote.common.exception.ErrorCode;
 import numble.pet.vote.common.exception.NotFoundException;
 import numble.pet.vote.pet.command.domain.Pet;
-import numble.pet.vote.pet.command.domain.PetEventType;
+import numble.pet.vote.pet.command.application.PetEventType;
 import numble.pet.vote.pet.command.domain.PetRepository;
 import numble.pet.vote.pet.command.domain.PetUpdatedEvent;
 import numble.pet.vote.pet.query.application.PetQueryService;

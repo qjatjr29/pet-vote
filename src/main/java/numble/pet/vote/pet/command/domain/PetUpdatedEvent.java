@@ -3,6 +3,7 @@ package numble.pet.vote.pet.command.domain;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import numble.pet.vote.common.event.Event;
+import numble.pet.vote.pet.command.application.PetEventType;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PetUpdatedEvent extends Event {

@@ -1,4 +1,4 @@
-package numble.pet.vote.pet.command.domain;
+package numble.pet.vote.pet.command.application;
 
 public enum PetEventType {
 
